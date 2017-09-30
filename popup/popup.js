@@ -1,7 +1,5 @@
 // Populating popup with list
 function populatePopup(pageCandidateUrls) {
-	console.log("inside populating function");
-	// console.log(lst);
 	if (Object.keys(pageCandidateUrls).length === 1) {
 		const candidates = Object.values(pageCandidateUrls)[0];
 		console.log(candidates);
@@ -12,7 +10,7 @@ function populatePopup(pageCandidateUrls) {
 			listEl.removeChild(listEl.firstChild);
 		}
 
-		for (let i = 0; i < candidates.length; i++) {
+		for (let i = 0, len = candidates.length; i < len; i++) {
 			if (i >= 15) {
 				break;
 			}
@@ -25,16 +23,14 @@ function populatePopup(pageCandidateUrls) {
 
 // Async handling functions
 function onGot(pageCandidates) {
-	console.log(pageCandidates);
 	populatePopup(pageCandidates);
 }
 
 function onError(error) {
 	console.log(`Error: ${error}`);
-	return -1;
+	return ;
 }
 
-// get current active tab
 function onSuccess(tabs) {
 	const currentTab = tabs[0];
 	const currentPage = String(currentTab.url);
@@ -45,7 +41,7 @@ function onSuccess(tabs) {
 	browser.storage.local.get(currentPage).then(onGot, onError);
 }
 
-
+// getting current tab url
 browser.tabs.query({ currentWindow: true, active: true }).then(onSuccess, onError);
 
 

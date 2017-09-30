@@ -16,20 +16,9 @@ const KEYWORDS = [
     new RegExp('termini-e-condizioni', 'i')
 ];
 
-function unique(arr) {
-    var u = {}, a = [];
-    for(i = 0; i < arr.length; i++) {
-        if(!u.hasOwnProperty(arr[i.url])) {
-            a.push(arr[i]);
-            u[arr[i].url] = 1;
-        }
-    }
-    return a;
-}
-
 function matchKeyword(url) {
-    for (crci of KEYWORDS) {
-        if (crci.test(url)) {
+    for (let i = 0, len = KEYWORDS.length; i < len; i++) {
+        if (KEYWORDS[i].test(url)) {
             return true;
         }
     }
@@ -39,16 +28,19 @@ function matchKeyword(url) {
 function candidateUrls(htmlDoc) {
     const links = htmlDoc.getElementsByTagName('a');
     const candidates = [];
-    for (url of links) {
-        if (matchKeyword(url.href) || matchKeyword(url.innerText)) {
+    const uniqueUrls = {};
+    for (let i = 0, len = links.length; i < len; i++) {
+        if ((matchKeyword(links[i].href) || matchKeyword(links[i].innerText)) && !(links[i].href in uniqueUrls)) {
+            
+            uniqueUrls[links[i].href] = true;
             candidates.push({
                 'domain': String(location), // TODO: use tld.js to get tld
-                'text': url.innerText,
-                'url': url.href,
+                'text': links[i].innerText,
+                'url': links[i].href
             });
         }
     }
-    return unique(candidates);
+    return candidates;
 };
 
 // Communicating with background.js
@@ -62,7 +54,8 @@ function handleError(error) {
 
 function notifyBackgroundPage(e) {
     let candidates = JSON.stringify(candidateUrls(document));
-    
+    console.log(candidates);
+
     // send candidate urls to bakcgound.js
     let sending = browser.runtime.sendMessage({
         candidates: candidates
@@ -71,4 +64,6 @@ function notifyBackgroundPage(e) {
 }
 
 // runs on page load TODO: maybe change to when DOM loads
+// NOTE: window onload does not seem to always trigger 
+// eg: https://github.com/ecnmst/pbot/blob/master/popup/popup.js
 window.addEventListener("load", notifyBackgroundPage);
