@@ -1,0 +1,16 @@
+{
+    "name": "pbot",
+    "version": "0.0.1",
+    "description": "privacy url finder",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "webpack"
+    },
+    "license": "MPL-2.0",
+    "devDependencies": {
+        "webpack": "^2.3.2"
+    },
+    "dependencies": {
+        "tldjs": "^2.0.2"
+    }
+}

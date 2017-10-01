@@ -1,3 +1,6 @@
+const { parse } = require('tldjs');
+
+
 // cached regex case insensitive (crci)
 const KEYWORDS = [
     new RegExp('privacy', 'i'),
@@ -34,7 +37,7 @@ function candidateUrls(htmlDoc) {
             
             uniqueUrls[links[i].href] = true;
             candidates.push({
-                'domain': String(location), // TODO: use tld.js to get tld
+                'domain': parse(location).domain,
                 'text': links[i].innerText,
                 'url': links[i].href
             });
@@ -54,7 +57,6 @@ function handleError(error) {
 
 function notifyBackgroundPage(e) {
     let candidates = JSON.stringify(candidateUrls(document));
-    console.log(candidates);
 
     // send candidate urls to bakcgound.js
     let sending = browser.runtime.sendMessage({
@@ -63,7 +65,13 @@ function notifyBackgroundPage(e) {
     sending.then(handleResponse, handleError);
 }
 
-// runs on page load TODO: maybe change to when DOM loads
-// NOTE: window onload does not seem to always trigger 
-// eg: https://github.com/ecnmst/pbot/blob/master/popup/popup.js
-window.addEventListener("load", notifyBackgroundPage);
+// Not sure I like this, but at least it triggers, 
+// and updates the icon bage text
+['DOMContentLoaded', 'load', 'ontouchstart', 'scroll'].forEach( evt =>
+    window.addEventListener(evt, notifyBackgroundPage, {
+        once: true,
+        passive: true,
+        capture: true
+      }
+    )
+);

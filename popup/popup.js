@@ -1,8 +1,10 @@
+const { parse } = require('tldjs');
+
+
 // Populating popup with list
 function populatePopup(pageCandidateUrls) {
 	if (Object.keys(pageCandidateUrls).length === 1) {
 		const candidates = Object.values(pageCandidateUrls)[0];
-		console.log(candidates);
 		let listEl = document.querySelector("ul");
 
 		// Removes default <li> elementt
@@ -33,7 +35,7 @@ function onError(error) {
 
 function onSuccess(tabs) {
 	const currentTab = tabs[0];
-	const currentPage = String(currentTab.url);
+	const currentPage = parse(String(currentTab.url)).domain;
 	console.log(`The current page is ${currentPage}`);
 
 

@@ -1,6 +1,6 @@
 # Privacy Bot
 
-## What it does ##
+### What it does ##
 
 The extension includes:
 
@@ -13,3 +13,19 @@ The extension includes:
 
 When the user clicks the browser action button, the popup is shown
 rendering the urls that are considered releant to privacy
+
+
+### Getting the extension built
+Uses `webpack`.
+
+```
+npm install
+```
+then 
+
+```
+npm run build
+```
+
+This populates the addon folder with all that it needs to function
+in the browser.
